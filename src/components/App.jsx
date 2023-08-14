@@ -33,19 +33,14 @@ const App = () => {
 
   const handleImageClick = (largeImageURL) => {
     setSelectedImage(largeImageURL);
-    window.addEventListener("keydown", handleEsc);
+
   };
 
   const handleCloseModal = () => {
     setSelectedImage(null);
-    window.removeEventListener("keydown", handleEsc);
   };
 
-  const handleEsc = (event) => {
-    if (event.keyCode === 27) {
-      handleCloseModal();
-    }
-  };
+
 
   const loadImages = () => {
     setShowLoader(true);
