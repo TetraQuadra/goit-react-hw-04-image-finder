@@ -85,18 +85,21 @@ const App = () => {
 
   useEffect(() => {
     searchSubmit("car");
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
     if (searchBar !== "") {
       handleSearch();
     }
+    // eslint-disable-next-line
   }, [searchBar]);
 
   useEffect(() => {
     if (currentPage !== 1) {
       handleLoadMoreImages();
     }
+    // eslint-disable-next-line
   }, [currentPage]);
 
   useEffect(() => loadImages(), [images])
