@@ -15,6 +15,9 @@ const App = () => {
   const [totalHits, setTotalHits] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
 
+  const prevSearchBar = useRef(searchBar);
+  const prevCurrentPage = useRef(currentPage);
+
   const searchSubmit = (text) => {
     if (text === searchBar) {
       return;
@@ -101,9 +104,6 @@ const App = () => {
   }, []);
 
   useEffect(() => loadImages(), [images]);
-
-  const prevSearchBar = useRef(searchBar);
-  const prevCurrentPage = useRef(currentPage);
 
   return (
     <div className="App">
