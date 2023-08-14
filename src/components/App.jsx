@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useRef } from "react";
 import getData from "services/getData";
 import Button from "./button/Button";
 import ImageGallery from "./imageGallery/ImageGallery";
@@ -64,11 +65,6 @@ const App = () => {
   };
 
   useEffect(() => {
-    setSearchBar("car");
-  }, []);
-
-  useEffect(() => {
-
     const handleLoadMoreImages = async () => {
       const response = await getData(searchBar, currentPage);
       if (response?.totalHits) {
@@ -84,21 +80,30 @@ const App = () => {
         setImages(response.hits);
         setTotalHits(response.totalHits);
       } else {
-        alert('Nothing found');
+        alert("Nothing found");
         setShowLoader(false);
       }
     };
 
-    if (searchBar !== "") {
+    if (searchBar !== "" && searchBar !== prevSearchBar.current) {
       handleSearch();
+      prevSearchBar.current = searchBar;
     }
 
-    if (currentPage !== 1) {
+    if (currentPage !== 1 && currentPage !== prevCurrentPage.current) {
       handleLoadMoreImages();
+      prevCurrentPage.current = currentPage;
     }
   }, [searchBar, currentPage]);
 
-  useEffect(() => loadImages(), [images])
+  useEffect(() => {
+    setSearchBar("car");
+  }, []);
+
+  useEffect(() => loadImages(), [images]);
+
+  const prevSearchBar = useRef(searchBar);
+  const prevCurrentPage = useRef(currentPage);
 
   return (
     <div className="App">
@@ -107,10 +112,8 @@ const App = () => {
       </header>
       <main>
         {showLoader && <Loader />}
-        <>
-          <ImageGallery images={images} handleImageClick={handleImageClick} />
-          {images.length < totalHits && !showLoader && images.length > 0 && <Button loadMore={loadMore} />}
-        </>
+        <ImageGallery images={images} handleImageClick={handleImageClick} />
+        {images.length < totalHits && !showLoader && images.length > 0 && <Button loadMore={loadMore} />}
       </main>
       {selectedImage && (
         <Modal
