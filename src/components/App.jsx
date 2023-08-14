@@ -63,44 +63,40 @@ const App = () => {
     });
   };
 
-  const handleSearch = async () => {
-    setShowLoader(true);
-    const response = await getData(searchBar);
-    if (response?.totalHits > 0) {
-      setImages(response.hits);
-      setTotalHits(response.totalHits);
-    } else {
-      alert('Nothing found');
-      setShowLoader(false);
-    }
-  };
-
-  const handleLoadMoreImages = async () => {
-    const response = await getData(searchBar, currentPage);
-    if (response?.totalHits) {
-      setImages((prevImages) => [...prevImages, ...response.hits]);
-      loadImages();
-    }
-  };
-
   useEffect(() => {
-    searchSubmit("car");
-    // eslint-disable-next-line
+    setSearchBar("car");
   }, []);
 
   useEffect(() => {
+
+    const handleLoadMoreImages = async () => {
+      const response = await getData(searchBar, currentPage);
+      if (response?.totalHits) {
+        setImages((prevImages) => [...prevImages, ...response.hits]);
+        loadImages();
+      }
+    };
+
+    const handleSearch = async () => {
+      setShowLoader(true);
+      const response = await getData(searchBar);
+      if (response?.totalHits > 0) {
+        setImages(response.hits);
+        setTotalHits(response.totalHits);
+      } else {
+        alert('Nothing found');
+        setShowLoader(false);
+      }
+    };
+
     if (searchBar !== "") {
       handleSearch();
     }
-    // eslint-disable-next-line
-  }, [searchBar]);
 
-  useEffect(() => {
     if (currentPage !== 1) {
       handleLoadMoreImages();
     }
-    // eslint-disable-next-line
-  }, [currentPage]);
+  }, [searchBar, currentPage]);
 
   useEffect(() => loadImages(), [images])
 
