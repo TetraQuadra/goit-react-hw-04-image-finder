@@ -26,7 +26,7 @@ const App = () => {
       setCurrentPage(1);
     }
     // user need to know that request is handled some way or another, i choosed alert instead of rerender same request
-    else {
+    if (text === searchBar) {
       alert(`Request "${text}" already loaded`)
     }
   };
