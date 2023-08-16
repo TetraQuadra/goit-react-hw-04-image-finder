@@ -15,10 +15,15 @@ const App = () => {
   const [showMore, setShowMore] = useState(false)
 
   const searchSubmit = (text) => {
-    setSearchBar(text);
-    setImages([]);
-    setCurrentPage(1);
-
+    if (text !== searchBar) {
+      setImages([]);
+      setSearchBar(text);
+      setCurrentPage(1);
+    }
+    // user need to know that request is handled some way or another, i choosed alert instead of rerender same request
+    else {
+      alert(`Request "${text}" already loaded`)
+    }
   };
 
   const loadMore = () => {
