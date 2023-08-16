@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useRef } from "react";
 import getData from "services/getData";
 import Button from "./button/Button";
 import ImageGallery from "./imageGallery/ImageGallery";
@@ -9,22 +8,17 @@ import Searchbar from "./searchbar/Searchbar";
 
 const App = () => {
   const [images, setImages] = useState([]);
-  const [showLoader, setShowLoader] = useState(true);
+  const [showLoader, setShowLoader] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchBar, setSearchBar] = useState("");
-  const [totalHits, setTotalHits] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
-
-  const prevSearchBar = useRef(searchBar);
-  const prevCurrentPage = useRef(currentPage);
+  const [showMore, setShowMore] = useState(false)
 
   const searchSubmit = (text) => {
-    if (text === searchBar) {
-      return;
-    }
     setSearchBar(text);
     setImages([]);
     setCurrentPage(1);
+
   };
 
   const loadMore = () => {
@@ -43,6 +37,9 @@ const App = () => {
 
 
   const loadImages = () => {
+    if (images.length === 0) {
+      return
+    }
     setShowLoader(true);
     const imageElements = document.querySelectorAll("img");
     let imagesLoaded = 0;
@@ -63,39 +60,28 @@ const App = () => {
   };
 
   useEffect(() => {
-    const handleLoadMoreImages = async () => {
-      const response = await getData(searchBar, currentPage);
-      if (response?.totalHits) {
-        setImages((prevImages) => [...prevImages, ...response.hits]);
-        loadImages();
-      }
-    };
-
     const handleSearch = async () => {
       setShowLoader(true);
-      const response = await getData(searchBar);
-      if (response?.totalHits > 0) {
-        setImages(response.hits);
-        setTotalHits(response.totalHits);
-      } else {
+      const response = await getData(searchBar, currentPage);
+      try {
+        setImages(prev => [...prev, ...response.hits]);
+        setShowMore(currentPage < Math.ceil(response.totalHits / 12))
+      }
+      catch {
         alert("Nothing found");
+      }
+      finally {
         setShowLoader(false);
       }
     };
-
-    if (searchBar !== "" && searchBar !== prevSearchBar.current) {
+    if (searchBar !== "") {
       handleSearch();
-      prevSearchBar.current = searchBar;
     }
 
-    if (currentPage !== 1 && currentPage !== prevCurrentPage.current) {
-      handleLoadMoreImages();
-      prevCurrentPage.current = currentPage;
-    }
   }, [searchBar, currentPage]);
 
   useEffect(() => {
-    setSearchBar("car");
+    setSearchBar("car", 1);
   }, []);
 
   useEffect(() => loadImages(), [images]);
@@ -108,7 +94,7 @@ const App = () => {
       <main>
         {showLoader && <Loader />}
         <ImageGallery images={images} handleImageClick={handleImageClick} />
-        {images.length < totalHits && !showLoader && images.length > 0 && <Button loadMore={loadMore} />}
+        {showMore && <Button loadMore={loadMore} />}
       </main>
       {selectedImage && (
         <Modal
