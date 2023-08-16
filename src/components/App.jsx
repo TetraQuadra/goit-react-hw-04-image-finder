@@ -15,6 +15,11 @@ const App = () => {
   const [showMore, setShowMore] = useState(false)
 
   const searchSubmit = (text) => {
+    //in case user sends empty request
+    if (text === '') {
+      alert('Your request is empty')
+      return
+    }
     if (text !== searchBar) {
       setImages([]);
       setSearchBar(text);
@@ -42,9 +47,6 @@ const App = () => {
 
 
   const loadImages = () => {
-    if (images.length === 0) {
-      return
-    }
     setShowLoader(true);
     const imageElements = document.querySelectorAll("img");
     let imagesLoaded = 0;
@@ -89,7 +91,12 @@ const App = () => {
     setSearchBar("car", 1);
   }, []);
 
-  useEffect(() => loadImages(), [images]);
+  useEffect(() => {
+    if (images.length === 0) {
+      return
+    }
+    loadImages()
+  }, [images]);
 
   return (
     <div className="App">
