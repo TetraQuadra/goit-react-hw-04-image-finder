@@ -20,15 +20,16 @@ const App = () => {
       alert('Your request is empty')
       return
     }
+    // user need to know that request is handled some way or another, i choosed alert instead of rerender same request
+    if (text === searchBar) {
+      alert(`Request "${text}" already loaded`)
+    }
     if (text !== searchBar) {
       setImages([]);
       setSearchBar(text);
       setCurrentPage(1);
     }
-    // user need to know that request is handled some way or another, i choosed alert instead of rerender same request
-    if (text === searchBar) {
-      alert(`Request "${text}" already loaded`)
-    }
+
   };
 
   const loadMore = () => {
@@ -43,8 +44,6 @@ const App = () => {
   const handleCloseModal = () => {
     setSelectedImage(null);
   };
-
-
 
   const loadImages = () => {
     setShowLoader(true);
@@ -81,15 +80,8 @@ const App = () => {
         setShowLoader(false);
       }
     };
-    if (searchBar !== "") {
-      handleSearch();
-    }
-
+    handleSearch();
   }, [searchBar, currentPage]);
-
-  useEffect(() => {
-    setSearchBar("car", 1);
-  }, []);
 
   useEffect(() => {
     if (images.length === 0) {
